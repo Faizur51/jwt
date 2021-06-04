@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
+Route::prefix('v1')->group(function(){
 
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/logout',[AuthController::class,'logout']);
@@ -26,3 +28,9 @@ Route::post('/logout',[AuthController::class,'logout']);
 
 //Route::get('/users',[AuthController::class,'index']);
 Route::resource('/users',AuthController::class);
+
+Route::middleware('auth:api')->group(function(){
+    Route::resource('/posts',PostController::class);
+});
+
+});
