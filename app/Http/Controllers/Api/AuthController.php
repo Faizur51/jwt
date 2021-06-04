@@ -16,11 +16,7 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $user=User::all();
@@ -31,14 +27,6 @@ class AuthController extends Controller
         ]);
     }
 
-
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
        $validator=Validator::make($request->all(),[
@@ -76,12 +64,6 @@ class AuthController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         try{
@@ -101,24 +83,7 @@ class AuthController extends Controller
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
         $validator=Validator::make($request->all(),[
@@ -156,12 +121,7 @@ class AuthController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy($id)
     {
         try{
@@ -183,27 +143,28 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if ($token = auth()->attempt($credentials)) {
-            return $this->respondWithToken($token);
+            return $this->respondWithToken(auth()->user(),$token);
         }
 
         return response()->json(['error' => 'Unauthorized bhi tomi'], 401);
 
     }
 
-    public function logout(){
-
-        auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
-    }
-
-
-    protected function respondWithToken($token)
+    protected function respondWithToken($user,$token)
     {
         return response()->json([
+            'name'=>$user->name,
+            'email'=>$user->email,
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $this->guard()->factory()->getTTL() * 60
         ]);
+    }
+
+    public function logout(){
+
+        auth()->logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function guard()

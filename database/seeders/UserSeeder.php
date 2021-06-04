@@ -15,6 +15,13 @@ class UserSeeder extends Seeder
     public function run()
     {
         $faker=Factory::create();
+
+        User::create([
+            'name'=>$faker->name,
+            'email'=>'faizcse51@gmail.com',
+            'password'=>bcrypt(123456),
+        ]);
+
         foreach (range(1,10) as $index){
            User::create([
                'name'=>$faker->name,
